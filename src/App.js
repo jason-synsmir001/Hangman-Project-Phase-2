@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Figure from './components/Figure';
 import WrongLetters from './components/WrongLetters';
 import Word from './components/Word';
 import Notification from './components/Warning';
 import { showNotification as show, checkWin } from './helpers/helpers';
+import HomePage from './pages/Homepage';
+import WinnerPage from './pages/WinnerPage';
+import LoserPage from './pages/LoserPage';
+import Letter from './components/Letter';
 import './App.css';
 
 function App() {
@@ -16,20 +21,22 @@ function App() {
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
-    fetch("https://random-word-api.herokuapp.com/word")
+    fetch('https://random-word-api.herokuapp.com/word')
       .then((response) => response.json())
       .then((data) => {
         setWords(data);
+        console.log(data)
         setSelectedWord(data[Math.floor(Math.random() * data.length)]);
-      })
+        
+      });
   }, []);
 
-  //determines what happens when a user presses a button. We should change this into a form to meet the post requirement?
+
   useEffect(() => {
     const keyPress = (event) => {
       const { key, keyCode } = event;
       const letter = key.toLowerCase();
-  
+
       if (playable && keyCode >= 65 && keyCode <= 90) {
         if (selectedWord.includes(letter)) {
           if (!correctLetters.includes(letter)) {
@@ -46,19 +53,11 @@ function App() {
         }
       }
     };
-  
+
     window.addEventListener('keydown', keyPress);
     return () => window.removeEventListener('keydown', keyPress);
   }, [correctLetters, wrongLetters, playable, selectedWord]);
-  
-  const playAgain = () => {
-    setPlayable(true);
 
-    setCorrectLetters([]);
-    setWrongLetters([]);
-
-    setSelectedWord(words[Math.floor(Math.random() * words.length)]);
-  };
 
   return (
     <>
@@ -66,12 +65,20 @@ function App() {
       <div className="game-container">
         <Figure wrongLetters={wrongLetters} />
         <WrongLetters wrongLetters={wrongLetters} />
-        <Word selectedWord={selectedWord} correctLetters={correctLetters} />
+        <Word selectedWord={selectedWord} correctLetters={correctLetters} wrongLetters={wrongLetters} />
+        <Letter letter ={'d'}/>
+ 
+        <BrowserRouter>
+          <Routes>
+            <Route index={true} element={HomePage} />
+            <Route path="Winner Page" element={WinnerPage} />
+            <Route path="Loser Page" element={LoserPage} />
+          </Routes>
+        </BrowserRouter>
       </div>
-
       <Notification showNotification={showNotification} />
     </>
   );
 }
 
-export default App;
+export default App
