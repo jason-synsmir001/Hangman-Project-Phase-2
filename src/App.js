@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Router } from 'react-router-dom';
 import Header from './components/Header';
 import Figure from './components/Figure';
 import WrongLetters from './components/WrongLetters';
 import Word from './components/Word';
-import Notification from './components/Warning';
+import Notification from './components/Notification';
 import { showNotification as show, checkWin } from './helpers/helpers';
 import HomePage from './pages/Homepage';
 import WinnerPage from './pages/WinnerPage';
@@ -61,20 +61,26 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Router />
+      <div className="App">
+        <Header />
       <div className="game-container">
         <Figure wrongLetters={wrongLetters} />
         <WrongLetters wrongLetters={wrongLetters} />
         <Word selectedWord={selectedWord} correctLetters={correctLetters} wrongLetters={wrongLetters} />
         <Letter letter ={'d'}/>
- 
-        <BrowserRouter>
+      </div>
+        <Routes path="/" element={<HomePage />}/>
           <Routes>
+          <Route path="/" element={<HomePage />} /> 
+          <Route
+            path="/game"
+            element={<GamePage playerName="John Doe" />} 
+          />
             <Route index={true} element={HomePage} />
             <Route path="Winner Page" element={WinnerPage} />
             <Route path="Loser Page" element={LoserPage} />
-          </Routes>
-        </BrowserRouter>
+        </Routes>
       </div>
       <Notification showNotification={showNotification} />
     </>
